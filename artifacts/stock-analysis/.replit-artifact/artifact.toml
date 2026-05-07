@@ -1,0 +1,31 @@
+kind = "data-app"
+previewPath = "/"
+title = "Stock Analysis Dashboard"
+version = "1.0.0"
+id = "artifacts/stock-analysis"
+router = "path"
+
+[[integratedSkills]]
+name = "data-visualization"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18824
+
+[services.development]
+run = "pnpm --filter @workspace/stock-analysis run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stock-analysis", "run", "build" ]
+publicDir = "artifacts/stock-analysis/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18824"
+BASE_PATH = "/"

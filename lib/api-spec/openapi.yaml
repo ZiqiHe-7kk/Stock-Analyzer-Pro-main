@@ -1,0 +1,199 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: stocks
+    description: Stock analysis operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /stocks:
+    get:
+      operationId: getStocks
+      tags: [stocks]
+      summary: Get all stocks with analysis
+      description: Returns all stocks with computed strength scores, trend predictions, and key metrics
+      responses:
+        "200":
+          description: List of stocks with analysis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StockAnalysis"
+  /stocks/summary:
+    get:
+      operationId: getStocksSummary
+      tags: [stocks]
+      summary: Get portfolio summary statistics
+      description: Returns aggregated statistics including sector breakdown, top performers, and overall market sentiment
+      responses:
+        "200":
+          description: Summary statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StocksSummary"
+  /stocks/sector-breakdown:
+    get:
+      operationId: getStocksSectorBreakdown
+      tags: [stocks]
+      summary: Get sector breakdown
+      description: Returns average strength score, count, and average 1-day change per sector
+      responses:
+        "200":
+          description: Sector breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SectorStats"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    StockAnalysis:
+      type: object
+      properties:
+        symbol:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        priceChange1d:
+          type: number
+        volume1d:
+          type: number
+        relativeVolume:
+          type: number
+        marketCap:
+          type: number
+        peRatio:
+          type: number
+          nullable: true
+        eps:
+          type: number
+          nullable: true
+        epsGrowth:
+          type: number
+          nullable: true
+        dividendYield:
+          type: number
+        sector:
+          type: string
+        analystRating:
+          type: string
+        strengthScore:
+          type: number
+          description: Composite score 0-100 indicating overall strength
+        trendOutlook:
+          type: string
+          description: "Bullish, Neutral, or Bearish"
+        strengthCategory:
+          type: string
+          description: "Strong, Moderate, Weak"
+        momentumSignal:
+          type: string
+          description: "High Volume Breakout, Accumulation, Distribution, Low Activity"
+        valuationSignal:
+          type: string
+          description: "Overvalued, Fair, Undervalued, N/A"
+      required:
+        - symbol
+        - description
+        - price
+        - priceChange1d
+        - volume1d
+        - relativeVolume
+        - marketCap
+        - dividendYield
+        - sector
+        - analystRating
+        - strengthScore
+        - trendOutlook
+        - strengthCategory
+        - momentumSignal
+        - valuationSignal
+    StocksSummary:
+      type: object
+      properties:
+        totalStocks:
+          type: integer
+        bullishCount:
+          type: integer
+        neutralCount:
+          type: integer
+        bearishCount:
+          type: integer
+        avgStrengthScore:
+          type: number
+        avgPriceChange1d:
+          type: number
+        topSector:
+          type: string
+        strongBuyCount:
+          type: integer
+        buyCount:
+          type: integer
+        neutralRatingCount:
+          type: integer
+        noRatingCount:
+          type: integer
+      required:
+        - totalStocks
+        - bullishCount
+        - neutralCount
+        - bearishCount
+        - avgStrengthScore
+        - avgPriceChange1d
+        - topSector
+        - strongBuyCount
+        - buyCount
+        - neutralRatingCount
+        - noRatingCount
+    SectorStats:
+      type: object
+      properties:
+        sector:
+          type: string
+        count:
+          type: integer
+        avgStrengthScore:
+          type: number
+        avgPriceChange1d:
+          type: number
+        strongestSymbol:
+          type: string
+      required:
+        - sector
+        - count
+        - avgStrengthScore
+        - avgPriceChange1d
+        - strongestSymbol
